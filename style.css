@@ -70,9 +70,8 @@ html.light body {
 html.light .bg-zinc-950,
 html.light .bg-zinc-900,
 html.light .bg-zinc-800 {
-
- background-color: #d6d6d6de !important;
-   color: #0e0000 !important;
+    background-color: #d6d6d6de !important;
+    color: #0e0000 !important;
 }
 
 html.light .glass {
