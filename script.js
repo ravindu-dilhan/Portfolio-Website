@@ -165,13 +165,38 @@ const mobileMenu = document.getElementById('mobile-menu');
 const themeToggle = document.getElementById('theme-toggle');
 const html = document.documentElement;
 
-mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-
-themeToggle.addEventListener('click', () => {
-    html.classList.toggle('dark');
+function updateThemeIcon() {
     themeToggle.innerHTML = html.classList.contains('dark')
         ? `<i class="fa-solid fa-sun text-lg"></i>`
         : `<i class="fa-solid fa-moon text-lg"></i>`;
+}
+
+function applyTheme(theme) {
+    if (theme === 'dark') {
+        html.classList.add('dark');
+        html.classList.remove('light');
+    } else {
+        html.classList.remove('dark');
+        html.classList.add('light');
+    }
+    updateThemeIcon();
+    localStorage.setItem('theme', theme);
+}
+
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = savedTheme === 'light' || savedTheme === 'dark'
+        ? savedTheme
+        : (prefersDark ? 'dark' : 'light');
+    applyTheme(theme);
+}
+
+mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+themeToggle.addEventListener('click', () => {
+    const nextTheme = html.classList.contains('dark') ? 'light' : 'dark';
+    applyTheme(nextTheme);
 });
 
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -232,8 +257,32 @@ function updateYear() {
     }
 }
 
+// Skills Animation
+function animateSkills() {
+    const skillBars = document.querySelectorAll('.skill-bar-fill');
+    skillBars.forEach(bar => {
+        const width = bar.getAttribute('data-width');
+        bar.style.width = width;
+    });
+}
+
+const skillsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateSkills();
+            skillsObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.1 });
+
+const skillsSection = document.getElementById('skills');
+if (skillsSection) {
+    skillsObserver.observe(skillsSection);
+}
+
 // Initialize
 window.addEventListener('load', () => {
+    initTheme();
     resizeCanvas();
     initParticles();
     animateParticles();
